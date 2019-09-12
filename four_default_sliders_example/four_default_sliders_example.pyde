@@ -36,8 +36,8 @@ def draw():
         node.desenha()  # desenha
         node.move(max_speed)    # atualiza posição
 
-    # checa edges, se OK desenhar, se nãotem nodes removidos ou iguais
-    nodes_com_edges = set()  # para guardar nodes com edge
+    # checa edges, se OK desenhar, se não tem nodes removidos ou iguais
+    nodes_with_edges = set()  # para guardar nodes com edge
     for edge in Edge.EDGES:
         if (edge.p1 not in Node.SET) or (edge.p2 not in Node.SET)\
                 or (edge.p1 is edge.p2):  # edges degeneradas
@@ -46,28 +46,28 @@ def draw():
             edge.desenha()  # desenha a linha
             edge.puxa_empurra(tam_edge)  # altera a velocidade dos nodes
             # Adiciona ao conjunto de nodes com edge
-            nodes_com_edges.update([edge.p1, edge.p2])
+            nodes_with_edges.update([edge.p1, edge.p2])
 
-    nodes_sem_edges = Node.SET - nodes_com_edges
-    # print(len(Node.SET), len(nodes_sem_edges), len(nodes_com_edges))
+    edgeless_nodes = Node.SET - nodes_with_edges
+    # print(len(Node.SET), len(edgeless_nodes), len(nodes_with_edges))
     # atualiza número de nodes
-    quantidade_atual_de_nodes = len(Node.SET)
-    if num_nodes > quantidade_atual_de_nodes:
+    number_of_nodes = len(Node.SET)
+    if num_nodes > number_of_nodes:
         Node.SET.add(Node(random(width), random(height)))
-    elif num_nodes < quantidade_atual_de_nodes - 2:
-        if nodes_sem_edges:
+    elif num_nodes < number_of_nodes - 2:
+        if edgeless_nodes:
             # remove um node sem edge
-            Node.SET.remove(nodes_sem_edges.pop())
+            Node.SET.remove(edgeless_nodes.pop())
         else:
             Node.SET.pop()  # remove um node qualquer
-    # outra maneira de eliminar nodes solitários é createndo edges
-    if nodes_sem_edges:
-        for node in nodes_sem_edges:
+    # outra maneira de eliminar nodes solitários é criando edges
+    if edgeless_nodes:
+        for node in edgeless_nodes:
             node.create_edges()
     # atualiza número de edges
     if int((num_nodes) * edge_rate) > len(Edge.EDGES) + 1:
-        if nodes_sem_edges:   # preferência por nodes solitários
-            choice(list(nodes_sem_edges)).create_edges()
+        if edgeless_nodes:   # preferência por nodes solitários
+            choice(list(edgeless_nodes)).create_edges()
         else:
             choice(list(Node.SET)).create_edges()
     elif int(num_nodes * edge_rate) < len(Edge.EDGES) - 1:
