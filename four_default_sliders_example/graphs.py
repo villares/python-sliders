@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from random import choice
 
-TAM_PONTO = 30  # TAM_PONTO dos nodes 
+NODE_SIZE = 30  # NODE_SIZE dos nodes 
 
 class Node():
     VEL_MAX = 5
@@ -27,7 +27,7 @@ class Node():
     def desenha(self):
         noStroke()
         fill(150, 50)
-        ellipse(self.x, self.y, TAM_PONTO, TAM_PONTO)
+        ellipse(self.x, self.y, NODE_SIZE, NODE_SIZE)
 
     def move(self, VEL_MAX):
         Node.VEL_MAX = VEL_MAX
@@ -74,9 +74,9 @@ class Edge():
         line(self.p1.x, self.p1.y, self.p2.x, self.p2.y)
         noStroke()
         fill(self.p1.cor)
-        ellipse(self.p1.x, self.p1.y, TAM_PONTO / 4, TAM_PONTO / 4)
+        ellipse(self.p1.x, self.p1.y, NODE_SIZE / 4, NODE_SIZE / 4)
         fill(self.p2.cor)
-        ellipse(self.p2.x, self.p2.y, TAM_PONTO / 4, TAM_PONTO / 4)
+        ellipse(self.p2.x, self.p2.y, NODE_SIZE / 4, NODE_SIZE / 4)
 
     def puxa_empurra(self, TAM_BARRA):
         d = dist(self.p1.x, self.p1.y, self.p2.x, self.p2.y)

@@ -7,7 +7,7 @@ add_library('serial')  # import processing.serial.*;
 add_library('arduino')  # import cc.arduino.*;
 
 from random import choice
-from graphs import Node, Edge
+from graphs import Node, Edge, NODE_SIZE
 from inputs import Slider
 
 def setup():
@@ -84,7 +84,7 @@ def draw():
 
 def mouseDragged():        # quando o mouse é arrastado
     for node in Node.SET:   # para cada Node checa distância do mouse
-        if dist(mouseX, mouseY, node.x, node.y) < TAM_PONTO / 2:
+        if dist(mouseX, mouseY, node.x, node.y) < NODE_SIZE / 2:
             # move o Node para posição do mouse
             node.x, node.y = mouseX, mouseY
             node.vx = 0
