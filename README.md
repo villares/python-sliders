@@ -16,3 +16,6 @@ Put slider.py into the same folder as your sketch and import the Slider class at
 <code>slider1.label = "number"</code>
 
 # TODO: Merge in inputs.py
+## Explain or change:
+### Slider.create_defaults(Arduino)
+### Slider.update_all()
