@@ -6,6 +6,7 @@ Grafos - Alexandre B A Villares 2018
 add_library('serial')  # import processing.serial.*;
 add_library('arduino')  # import cc.arduino.*;
 
+from random import choice
 from graphs import *
 from inputs import *
 
@@ -17,78 +18,77 @@ def setup():
     #  Slider.create_defaults(Arduino)
     Slider.create_defaults() # creates 4 sliders
     
-    Ponto.SET = set()
-    NUM_PONTOS = int(Slider.val(2) / 4)
-    for _ in range(NUM_PONTOS):
-        Ponto.SET.add(Ponto(width / 2, height / 2))
+    Node.SET = set()
+    num_nodes = int(Slider.val(2) / 4)
+    for _ in range(num_nodes):
+        Node.SET.add(Node(width / 2, height / 2))
 
 def draw():
     background(0)
 
-    TAM_ARESTA = Slider.val(1) / 4
-    NUM_PONTOS = int(Slider.val(2) / 4)
-    VEL_MAX = Slider.val(3) / 128
-    CONNECT_RATE = 0.5 + Slider.val(0) / 256  # % of connections
+    tam_edge = Slider.val(1) / 4
+    num_nodes = int(Slider.val(2) / 4)
+    max_speed = Slider.val(3) / 128
+    edge_rate = 0.5 + Slider.val(0) / 256  # % of connections
 
-    # para cada ponto
-    for ponto in Ponto.SET:
-        ponto.desenha()  # desenha
-        ponto.move(VEL_MAX)    # atualiza posição
+    # para cada node
+    for node in Node.SET:
+        node.desenha()  # desenha
+        node.move(max_speed)    # atualiza posição
 
-    # checa arestas, se OK desenhar, se nãotem pontos removidos ou iguais
-    pontos_com_arestas = set()  # para guardar pontos com aresta
-    for aresta in Aresta.ARESTAS:
-        if (aresta.p1 not in Ponto.SET) or (aresta.p2 not in Ponto.SET)\
-                or (aresta.p1 is aresta.p2):  # arestas degeneradas
-            Aresta.ARESTAS.remove(aresta)   # remove a aresta
+    # checa edges, se OK desenhar, se nãotem nodes removidos ou iguais
+    nodes_com_edges = set()  # para guardar nodes com edge
+    for edge in Edge.EDGES:
+        if (edge.p1 not in Node.SET) or (edge.p2 not in Node.SET)\
+                or (edge.p1 is edge.p2):  # edges degeneradas
+            Edge.EDGES.remove(edge)   # remove a edge
         else:                # senão, tudo OK!
-            aresta.desenha()  # desenha a linha
-            aresta.puxa_empurra(TAM_ARESTA)  # altera a velocidade dos pontos
-            # Adiciona ao conjunto de pontos com aresta
-            pontos_com_arestas.update([aresta.p1, aresta.p2])
+            edge.desenha()  # desenha a linha
+            edge.puxa_empurra(tam_edge)  # altera a velocidade dos nodes
+            # Adiciona ao conjunto de nodes com edge
+            nodes_com_edges.update([edge.p1, edge.p2])
 
-    pontos_sem_arestas = Ponto.SET - pontos_com_arestas
-    # print(len(Ponto.SET), len(pontos_sem_arestas), len(pontos_com_arestas))
-    # atualiza número de pontos
-    quantidade_atual_de_pontos = len(Ponto.SET)
-    if NUM_PONTOS > quantidade_atual_de_pontos:
-        Ponto.SET.add(Ponto(random(width), random(height)))
-    elif NUM_PONTOS < quantidade_atual_de_pontos - 2:
-        if pontos_sem_arestas:
-            # remove um ponto sem aresta
-            Ponto.SET.remove(pontos_sem_arestas.pop())
+    nodes_sem_edges = Node.SET - nodes_com_edges
+    # print(len(Node.SET), len(nodes_sem_edges), len(nodes_com_edges))
+    # atualiza número de nodes
+    quantidade_atual_de_nodes = len(Node.SET)
+    if num_nodes > quantidade_atual_de_nodes:
+        Node.SET.add(Node(random(width), random(height)))
+    elif num_nodes < quantidade_atual_de_nodes - 2:
+        if nodes_sem_edges:
+            # remove um node sem edge
+            Node.SET.remove(nodes_sem_edges.pop())
         else:
-            Ponto.SET.pop()  # remove um ponto qualquer
-    # outra maneira de eliminar pontos solitários é criando arestas
-    if pontos_sem_arestas:
-        for ponto in pontos_sem_arestas:
-            ponto.cria_arestas()
-    # atualiza número de arestas
-    if int((NUM_PONTOS) * CONNECT_RATE) > len(Aresta.ARESTAS) + 1:
-        if pontos_sem_arestas:   # preferência por pontos solitários
-            rnd_choice(list(pontos_sem_arestas)).cria_arestas()
+            Node.SET.pop()  # remove um node qualquer
+    # outra maneira de eliminar nodes solitários é createndo edges
+    if nodes_sem_edges:
+        for node in nodes_sem_edges:
+            node.create_edges()
+    # atualiza número de edges
+    if int((num_nodes) * edge_rate) > len(Edge.EDGES) + 1:
+        if nodes_sem_edges:   # preferência por nodes solitários
+            choice(list(nodes_sem_edges)).create_edges()
         else:
-            rnd_choice(list(Ponto.SET)).cria_arestas()
-    elif int(NUM_PONTOS * CONNECT_RATE) < len(Aresta.ARESTAS) - 1:
-        Aresta.ARESTAS.remove(rnd_choice(Aresta.ARESTAS))
+            choice(list(Node.SET)).create_edges()
+    elif int(num_nodes * edge_rate) < len(Edge.EDGES) - 1:
+        Edge.EDGES.remove(choice(Edge.EDGES))
 
     if keyPressed and key==" ":
-        # Ponto.reset(int(Slider.val(2) / 4))
-        Ponto.SET = set()
-        for _ in range(NUM_PONTOS):
-            Ponto.SET.add(Ponto(width / 2, height / 2))
-
+        # Node.reset(int(Slider.val(2) / 4))
+        Node.SET = set()
+        for _ in range(num_nodes):
+            Node.SET.add(Node(width / 2, height / 2))
 
     # Updates reading or draws sliders and checks mouse dragging
     Slider.update_all()
 
 def mouseDragged():        # quando o mouse é arrastado
-    for ponto in Ponto.SET:   # para cada Ponto checa distância do mouse
-        if dist(mouseX, mouseY, ponto.x, ponto.y) < TAM_PONTO / 2:
-            # move o Ponto para posição do mouse
-            ponto.x, ponto.y = mouseX, mouseY
-            ponto.vx = 0
-            ponto.vy = 0
+    for node in Node.SET:   # para cada Node checa distância do mouse
+        if dist(mouseX, mouseY, node.x, node.y) < TAM_PONTO / 2:
+            # move o Node para posição do mouse
+            node.x, node.y = mouseX, mouseY
+            node.vx = 0
+            node.vy = 0
 
 def keyPressed():
     global GIF_EXPORT

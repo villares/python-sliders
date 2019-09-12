@@ -1,24 +1,27 @@
 # -*- coding: utf-8 -*-
-TAM_PONTO = 30  # TAM_PONTO dos Pontos 
+from random import choice
 
-class Ponto():
+TAM_PONTO = 30  # TAM_PONTO dos nodes 
+
+class Node():
     VEL_MAX = 5
     SET = set()
 
-    " Pontos num grafo, VEL_MAX inicial sorteada, criam Arestas com outros Pontos "
+    " nodes num grafo, creates Edges with other nodes "
 
     def __init__(self, x, y, cor=color(0)):
-        VEL_MAX = Ponto.VEL_MAX
+        VEL_MAX = Node.VEL_MAX
         self.x = x
         self.y = y
-        self.z = 0  # para compatibilidade com PVector...
+        self.z = 0  # for compatibility with PVector only...
         self.vx = random(-VEL_MAX, VEL_MAX)
         self.vy = random(-VEL_MAX, VEL_MAX)
         colorMode(HSB)
         self.cor = color(random(256), 255, 255)
-        self.cria_arestas()
+        self.create_edges()
 
     def __getitem__(self,i):
+        """ only to make a node PVector-like :) """
         return (self.x, self.y, self.z)[i]
 
     def desenha(self):
@@ -27,26 +30,26 @@ class Ponto():
         ellipse(self.x, self.y, TAM_PONTO, TAM_PONTO)
 
     def move(self, VEL_MAX):
-        Ponto.VEL_MAX = VEL_MAX
+        Node.VEL_MAX = VEL_MAX
         self.x += self.vx
         self.y += self.vy
         if not (0 < self.x < width):
             self.vx = -self.vx
         if not (0 < self.y < height):
             self.vy = -self.vy
-        self.vx = self.limitar(self.vx, VEL_MAX)
-        self.vy = self.limitar(self.vy, VEL_MAX)
+        self.vx = self.limit(self.vx, VEL_MAX)
+        self.vy = self.limit(self.vy, VEL_MAX)
 
-    def cria_arestas(self):
-            lista_pontos = list(Ponto.SET)
-            if len(lista_pontos) > 1:
-                rnd_ponto = rnd_choice(lista_pontos)
-                while rnd_ponto == self:
-                    rnd_ponto = rnd_choice(lista_pontos)
+    def create_edges(self):
+            lista_nodes = list(Node.SET)
+            if len(lista_nodes) > 1:
+                rnd_node = choice(lista_nodes)
+                while rnd_node == self:
+                    rnd_node = choice(lista_nodes)
             
-                Aresta.ARESTAS.append(Aresta(rnd_ponto, self))
+                Edge.EDGES.append(Edge(rnd_node, self))
 
-    def limitar(self, v, v_max):
+    def limit(self, v, v_max):
         if v > v_max:
             return v_max
         elif v < -v_max:
@@ -55,11 +58,11 @@ class Ponto():
             return v
 
 
-class Aresta():
+class Edge():
 
-    """ Arest_SETas contém só dois Pontos e podem ou não estar selecionadas """            
+    """ EDGES contain 2 Nodes """            
 
-    ARESTAS = []
+    EDGES = []
 
     def __init__(self, p1, p2):
         self.p1 = p1
@@ -84,10 +87,3 @@ class Aresta():
         self.p1.vy = self.p1.vy + dir.y
         self.p2.vx = self.p2.vx - dir.x
         self.p2.vy = self.p2.vy - dir.y
-
-def rnd_choice(collection):
-    if collection:
-        i = int(random(len(collection)))
-        return collection[i]
-    else:
-        return None
