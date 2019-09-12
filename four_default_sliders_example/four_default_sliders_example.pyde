@@ -7,8 +7,8 @@ add_library('serial')  # import processing.serial.*;
 add_library('arduino')  # import cc.arduino.*;
 
 from random import choice
-from graphs import *
-from inputs import *
+from graphs import Node, Edge
+from inputs import Slider
 
 def setup():
     size(600, 600)
