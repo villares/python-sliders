@@ -13,9 +13,9 @@ from inputs import *
 def setup():
     size(600, 600)
     frameRate(30)
-    GIF_EXPORT = False
-    # Ask user for Arduino port, uses only slider if none is selected`
-    #  Slider.create_defaults(Arduino)
+    # Check github.com/villares/lousa-magica for hardware instructions
+    # use: Slider.create_defaults(Arduino)
+    # and it will ask user for Arduino port, but uses only sliders if none is selected
     Slider.create_defaults() # creates 4 sliders
     
     Node.SET = set()
