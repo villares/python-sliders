@@ -11,7 +11,7 @@ https://github.com/hackingmath/python-sliders http://farrellpolymath.com/
 class Slider:
 
     sliders = []
-    firmata = None
+    firmata_port = None
 
     def __init__(self, low, high, default):
         '''slider has range from low to high
@@ -116,7 +116,7 @@ class Slider:
     def update_all(cls, display=True):
         for i, slider in enumerate(cls.sliders):
             slider.update(display)
-            if cls.firmata_port:
+            if cls.firmata_port is not None:
                 a = slider.analog(cls.analog_pins[i])
                 slider.rectx = map(a, 0, 1023, slider.x, slider.x + 120)
 
