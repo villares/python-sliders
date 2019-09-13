@@ -16,7 +16,7 @@ def setup():
     # Check github.com/villares/lousa-magica for hardware instructions
     # use: Slider.create_defaults(Arduino)
     # and it will ask user for Arduino port, but uses only sliders if none is selected
-    Slider.create_defaults() # creates 4 sliders
+    Slider.create_defaults(Arduino) # creates 4 sliders
     
     Node.SET = set()
     num_nodes = int(Slider.val(2) / 4)

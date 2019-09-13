@@ -116,7 +116,7 @@ class Slider:
     def update_all(cls, display=True):
         for i, slider in enumerate(cls.sliders):
             slider.update(display)
-            if cls.firmata:
+            if cls.firmata_port:
                 a = slider.analog(cls.analog_pins[i])
                 slider.rectx = map(a, 0, 1023, slider.x, slider.x + 120)
 
@@ -151,20 +151,14 @@ class Slider:
             [barra de espaço] para limpar o desenho"""
             ok = JOptionPane.showMessageDialog(None, message)
             
-    @classmethod            
-    def setup_firmata(cls, Arduino, analog_pins=(1, 2, 3, 4)):
-        cls.select_firmata(Arduino)
-        cls.analog_pins = analog_pins
-        if cls.firmata:
-            cls.arduino = Arduino(this, Arduino.list()[cls.firmata], 57600)
 
     def analog(cls, pin):
-        if cls.firmata:
+        if cls.firmata_port is not None:
             return cls.arduino.analogRead(pin)
 
     def digital(cls, pin=13):
         space_pressed = keyPressed and key == ' '
-        if cls.firmata:
+        if cls.firmata_port is not None:
             if pin == 13:
                 return cls.arduino.digitalRead(13) or space_pressed
             else:
@@ -173,13 +167,20 @@ class Slider:
             return space_pressed
         
     @classmethod            
-    def select_firmata(cls, Arduino):
-        # Input.Arduino = Arduino  # to make available on this module
+    def setup_firmata(cls, Arduino, analog_pins=(1, 2, 3, 4)):
+        cls.firmata_port = cls.select_port(Arduino)
+        println("Firmata port selected: {}".format(cls.firmata_port))
+        if cls.firmata_port is not None:
+            cls.analog_pins = analog_pins
+            cls.arduino = Arduino(this, Arduino.list()[cls.firmata_port], 57600)
+                
+    @classmethod            
+    def select_port(cls, Arduino):
         port_list = [str(num) + ": " + port for num, port
                      in enumerate(Arduino.list())]
         if not port_list:
             port_list.append(None)
-        cls.firmata = option_pane("O seu Arduino está conectado?",
+        return option_pane("O seu Arduino está conectado?",
                                   "Escolha a porta ou pressione Cancel\npara usar 'sliders':",
                                   port_list,
                                   0)  # index for default option
