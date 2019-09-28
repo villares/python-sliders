@@ -12,6 +12,7 @@ class Slider:
 
     sliders = []
     firmata_port = None
+    d_width = 120
 
     def __init__(self, low, high, default):
         '''slider has range from low to high
@@ -28,7 +29,7 @@ class Slider:
         self.x = x
         self.y = y
         # the position of the rect you slide:
-        self.rectx = self.x + map(self.val, self.low, self.high, 0, 120)
+        self.rectx = self.x + map(self.val, self.low, self.high, 0, self.d_width)
         self.recty = self.y - 10
 
     def update(self, display=True):
@@ -45,21 +46,21 @@ class Slider:
             # black translucid rect behind slider
             fill(0, 100)
             noStroke()
-            rect(self.x + 60, self.y, 130, 20)
+            rect(self.x + 60, self.y, self.d_width + 10, 20)
             # gray line behind slider
             strokeWeight(4)
             stroke(200)
-            line(self.x, self.y, self.x + 120, self.y)
+            line(self.x, self.y, self.x + self.d_width, self.y)
             # press mouse to move slider
-            if (self.x < mouseX < self.x + 120 and
-                    self.y < mouseY < self.y + 20):
+            if (self.x < mouseX < self.x + self.d_width and
+                    self.y - 10 < mouseY < self.y + 10):
                 fill(250)
                 textSize(10)
                 text(str(int(self.val)), self.rectx, self.recty + 35)
                 if mousePressed:
                     self.rectx = mouseX
             # constrain rectangle
-            self.rectx = constrain(self.rectx, self.x, self.x + 120)
+            self.rectx = constrain(self.rectx, self.x, self.x + self.d_width)
             # draw rectangle
             noStroke()
             fill(255)
@@ -138,6 +139,7 @@ class Slider:
         B.position(40, height - 30)
         C.position(width - 140, height - 70)
         D.position(width - 140, height - 30)
+        return A, B, C, D
         
     @classmethod
     def help(cls):
