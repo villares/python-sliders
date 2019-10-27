@@ -52,9 +52,8 @@ class Slider:
         fill(0, 100)
         noStroke()
         rect(self.x + 60, self.y, self.d_width + 10, 20)
-        # gray line behind slider
-        strokeWeight(4)
-        stroke(200)
+        # line behind slider
+        stroke(0)
         line(self.x, self.y, self.x + self.d_width, self.y)
         # press mouse to move slider
         if (self.x < mouseX < self.x + self.d_width and
@@ -67,10 +66,15 @@ class Slider:
         # constrain rectangle
         self.rectx = constrain(self.rectx, self.x, self.x + self.d_width)
         # draw rectangle
-        noStroke()
+        # noStroke()
         fill(255)
         rect(self.rectx, self.recty + 10, 10, 20)
         self.val = map(self.rectx, self.x, self.x + 120, self.low, self.high)
+        popStyle()
+    
+    def value(self):
+        self.update(display=True)
+        return self.val
 
     def key_pressed(self):
         down, up = self.kbd
