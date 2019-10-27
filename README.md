@@ -13,9 +13,13 @@ Put slider.py into the same folder as your sketch and import the Slider class at
 <p>In the draw function, assign the value of the slider to a variable:</p>
 <code>num = slider1.value()</code>
 <p>You have the option of labeling the slider, too:</p>
-<code>slider1.label = "number"</code>
+<code>slider1.label = "number"</code>  
 
 # TODO: Merge in inputs.py
+
+### implement `.label`
+
 ## Explain or change:
-### Slider.create_defaults(Arduino)
-### Slider.update_all()
+
+### `Slider.create_defaults(Arduino)`
+### `Slider.update_all()`
