@@ -12,8 +12,10 @@ class Slider:
 
     sliders = []
     firmata_port = None
+    d_width = 120
 
-    def __init__(self, low, high, default):
+    def __init__(self, low, high, default, kbd=None):
+        self.kbd = kbd or ('a', 'd')
         '''slider has range from low to high
         and is set to default'''
         self.low = low
@@ -28,7 +30,8 @@ class Slider:
         self.x = x
         self.y = y
         # the position of the rect you slide:
-        self.rectx = self.x + map(self.val, self.low, self.high, 0, 120)
+        self.rectx = self.x + \
+            map(self.val, self.low, self.high, 0, self.d_width)
         self.recty = self.y - 10
 
     def update(self, display=True):
@@ -38,81 +41,68 @@ class Slider:
             self.rectx += 1
         if self.down:
             self.rectx -= 1
-            #draw
+            # draw
         if display:
-            pushStyle()
-            rectMode(CENTER)
-            # black translucid rect behind slider
-            fill(0, 100)
-            noStroke()
-            rect(self.x + 60, self.y, 130, 20)
-            # gray line behind slider
-            strokeWeight(4)
-            stroke(200)
-            line(self.x, self.y, self.x + 120, self.y)
-            # press mouse to move slider
-            if (self.x < mouseX < self.x + 120 and
-                    self.y < mouseY < self.y + 20):
-                fill(250)
-                textSize(10)
-                text(str(int(self.val)), self.rectx, self.recty + 35)
-                if mousePressed:
-                    self.rectx = mouseX
-            # constrain rectangle
-            self.rectx = constrain(self.rectx, self.x, self.x + 120)
-            # draw rectangle
-            noStroke()
-            fill(255)
-            rect(self.rectx, self.recty + 10, 10, 20)
-            self.val = map(self.rectx, self.x, self.x + 120, self.low, self.high)
-            popStyle()
+            self.display()
+
+    def display(self):
+        pushStyle()
+        rectMode(CENTER)
+        # black translucid rect behind slider
+        fill(0, 100)
+        noStroke()
+        rect(self.x + 60, self.y, self.d_width + 10, 20)
+        # line behind slider
+        stroke(0)
+        line(self.x, self.y, self.x + self.d_width, self.y)
+        # press mouse to move slider
+        if (self.x < mouseX < self.x + self.d_width and
+                self.y - 10 < mouseY < self.y + 10):
+            fill(250)
+            textSize(10)
+            text(str(int(self.val)), self.rectx, self.recty + 35)
+            if mousePressed:
+                self.rectx = mouseX
+        # constrain rectangle
+        self.rectx = constrain(self.rectx, self.x, self.x + self.d_width)
+        # draw rectangle
+        # noStroke()
+        fill(255)
+        rect(self.rectx, self.recty + 10, 10, 20)
+        self.val = map(self.rectx, self.x, self.x + 120, self.low, self.high)
+        popStyle()
+    
+    def value(self):
+        self.update(display=True)
+        return self.val
+
+    def key_pressed(self):
+        down, up = self.kbd
+        k = keyCode if isinstance(down, int) else key
+        if k == down:
+            self.down = True
+        if k == up:
+            self.up = True
+
+    def key_released(self):
+        down, up = self.kbd
+        k = keyCode if isinstance(down, int) else key
+        if k == down:
+            self.down = False
+        if k == up:
+            self.up = False
 
     @classmethod
     def keyPressed(cls):
-        if key == 'a':
-            cls.sliders[0].down = True
-        if key == 'd':
-            cls.sliders[0].up = True
-        if key == 's':
-            cls.sliders[1].down = True
-        if key == 'w':
-            cls.sliders[1].up = True
-        if keyCode == LEFT:
-            cls.sliders[2].down = True
-        if keyCode == RIGHT:
-            cls.sliders[2].up = True
-        if keyCode == DOWN:
-            cls.sliders[3].down = True
-        if keyCode == UP:
-            cls.sliders[3].up = True
+        for slider in cls.sliders:
+            slider.key_pressed()
 
     @classmethod
     def keyReleased(cls):
-        if key == 'a':
-            cls.sliders[0].down = False
-        if key == 'd':
-            cls.sliders[0].up = False
-        if key == 's':
-            cls.sliders[1].down = False
-        if key == 'w':
-            cls.sliders[1].up = False
-        if keyCode == LEFT:
-            cls.sliders[2].down = False
-        if keyCode == RIGHT:
-            cls.sliders[2].up = False
-        if keyCode == DOWN:
-            cls.sliders[3].down = False
-        if keyCode == UP:
-            cls.sliders[3].up = False
+        for slider in cls.sliders:
+            slider.key_released()
 
-     # TODO: Better key reading
-    #     KEY_PAIRS = ((ord('A'), ord('D')),
-    #                  (ord('W'), ord('S')),
-    #                  (LEFT, RIGHT),
-    #                  (UP, DOWN),
-    #                  )
-        
-    @classmethod               
+    @classmethod
     def update_all(cls, display=True):
         for i, slider in enumerate(cls.sliders):
             slider.update(display)
@@ -120,28 +110,28 @@ class Slider:
                 a = slider.analog(cls.analog_pins[i])
                 slider.rectx = map(a, 0, 1023, slider.x, slider.x + 120)
 
-
-    @classmethod               
-    def val(cls,n):
+    @classmethod
+    def get_val(cls, n):
         return cls.sliders[n].val
 
-    @classmethod               
-    def create_defaults(cls, Arduino=None):
+    @classmethod
+    def create_defaults(cls, Arduino=None, num=4):
         if Arduino:
             cls.setup_firmata(Arduino)
         # start, end, default
-        A = Slider(0, 1023, 128)
-        B = Slider(0, 1023, 128)
-        C = Slider(0, 1023, 128)
-        D = Slider(0, 1023, 128)
+        A = Slider(0, 1023, 128, ("a", "d"))
+        B = Slider(0, 1023, 128, ("s", "w"))
+        C = Slider(0, 1023, 128, (LEFT, RIGHT))
+        D = Slider(0, 1023, 128, (DOWN, UP))
         A.position(40, height - 70)
         B.position(40, height - 30)
         C.position(width - 140, height - 70)
         D.position(width - 140, height - 30)
-        
+        return A, B, C, D
+
     @classmethod
     def help(cls):
-            message = """    Teclas:
+        message = """    Teclas:
             'h' para esta ajuda
             'p' para salvar uma imagem
             'a' (-) ou 'd' (+) para o slider 1
@@ -149,8 +139,7 @@ class Slider:
              ←(-) ou  → (+) para o slider 3
              ↓  (-) ou  ↑  (+) para o slider 4
             [barra de espaço] para limpar o desenho"""
-            ok = JOptionPane.showMessageDialog(None, message)
-            
+        ok = JOptionPane.showMessageDialog(None, message)
 
     def analog(cls, pin):
         if cls.firmata_port is not None:
@@ -161,29 +150,30 @@ class Slider:
         if cls.firmata_port is not None:
             if pin == 13:
                 return cls.arduino.digitalRead(13) or space_pressed
-            else:
+            else  :
                 return arduino.digitalRead(pin)
         else:
             return space_pressed
-        
-    @classmethod            
+
+    @classmethod
     def setup_firmata(cls, Arduino, analog_pins=(1, 2, 3, 4)):
         cls.firmata_port = cls.select_port(Arduino)
         println("Firmata port selected: {}".format(cls.firmata_port))
         if cls.firmata_port is not None:
             cls.analog_pins = analog_pins
-            cls.arduino = Arduino(this, Arduino.list()[cls.firmata_port], 57600)
-                
-    @classmethod            
+            cls.arduino = Arduino(
+                this, Arduino.list()[cls.firmata_port], 57600)
+
+    @classmethod
     def select_port(cls, Arduino):
         port_list = [str(num) + ": " + port for num, port
                      in enumerate(Arduino.list())]
         if not port_list:
             port_list.append(None)
         return option_pane("O seu Arduino está conectado?",
-                                  "Escolha a porta ou pressione Cancel\npara usar 'sliders':",
-                                  port_list,
-                                  0)  # index for default option
+                           "Escolha a porta ou pressione Cancel\npara usar 'sliders':",
+                           port_list,
+                           0)  # index for default option
 
 
 def option_pane(title, message, options, default=None, index_only=True):

@@ -19,17 +19,17 @@ def setup():
     Slider.create_defaults(Arduino) # creates 4 sliders
     
     Node.SET = set()
-    num_nodes = int(Slider.val(2) / 4)
+    num_nodes = int(Slider.get_val(2) / 4)
     for _ in range(num_nodes):
         Node.SET.add(Node(width / 2, height / 2))
 
 def draw():
     background(0)
-
-    tam_edge = Slider.val(1) / 4
-    num_nodes = int(Slider.val(2) / 4)
-    max_speed = Slider.val(3) / 128
-    edge_rate = 0.5 + Slider.val(0) / 256  # % of connections
+    # panel[1].val
+    edge_rate = 0.5 + Slider.get_val(0) / 256  # % of connections
+    tam_edge = Slider.get_val(1) / 4
+    num_nodes = int(Slider.get_val(2) / 4)
+    max_speed = Slider.get_val(3) / 128
 
     # para cada node
     for node in Node.SET:
