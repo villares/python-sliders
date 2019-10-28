@@ -24,6 +24,7 @@ class Slider:
         self.clicked = False
         self.up, self.down = False, False
         self.sliders.append(self)
+        self.label = None
 
     def position(self, x, y):
         '''slider's position on screen'''
@@ -45,33 +46,45 @@ class Slider:
         if display:
             self.display()
 
-    def display(self):
+    def display(self, show_value=True):
         pushStyle()
         rectMode(CENTER)
         # black translucid rect behind slider
-        fill(0, 100)
-        noStroke()
-        rect(self.x + 60, self.y, self.d_width + 10, 20)
+        # fill(0, 100)
+        # noStroke()
+        # rect(self.x + 60, self.y, self.d_width + 10, 20)
         # line behind slider
-        stroke(0)
+        stroke(200)
+        strokeWeight(4)
         line(self.x, self.y, self.x + self.d_width, self.y)
         # press mouse to move slider
         if (self.x < mouseX < self.x + self.d_width and
                 self.y - 10 < mouseY < self.y + 10):
-            fill(250)
             textSize(10)
+            fill(0)
             text(str(int(self.val)), self.rectx, self.recty + 35)
             if mousePressed:
                 self.rectx = mouseX
         # constrain rectangle
         self.rectx = constrain(self.rectx, self.x, self.x + self.d_width)
         # draw rectangle
-        # noStroke()
-        fill(255)
+        fill(250)
+        stroke(0)
+        strokeWeight(1)
         rect(self.rectx, self.recty + 10, 10, 20)
         self.val = map(self.rectx, self.x, self.x + 120, self.low, self.high)
+        #draw label
+        fill(0)
+        textSize(10)
+        # if show_value:
+        #     text(int(self.val),self.rectx,self.recty + 35)
+        if self.label is not None:
+            #text label
+            text(self.label,self.x + 135,self.y);
         popStyle()
     
+    
+            
     def value(self):
         self.update(display=True)
         return self.val
