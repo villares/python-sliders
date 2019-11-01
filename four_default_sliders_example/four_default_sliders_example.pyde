@@ -12,6 +12,7 @@ from inputs import Slider
 
 def setup():
     size(600, 600)
+    # fullScreen();
     frameRate(30)
     # Check github.com/villares/lousa-magica for hardware instructions
     # use: Slider.create_defaults(Arduino)
