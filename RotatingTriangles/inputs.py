@@ -25,6 +25,8 @@ class Slider:
         self.up, self.down = False, False
         self.sliders.append(self)
         self.label = None
+        self.w, self.h = 120, 20
+
 
     def position(self, x, y):
         '''slider's position on screen'''
@@ -47,13 +49,10 @@ class Slider:
             self.display()
 
     def display(self, show_value=True):
+        pushMatrix()
+        resetMatrix()
         pushStyle()
         rectMode(CENTER)
-        # black translucid rect behind slider
-        # fill(0, 100)
-        # noStroke()
-        # rect(self.x + 60, self.y, self.d_width + 10, 20)
-        # line behind slider
         stroke(200)
         strokeWeight(4)
         line(self.x, self.y, self.x + self.d_width, self.y)
@@ -82,7 +81,7 @@ class Slider:
             #text label
             text(self.label,self.x + 135,self.y);
         popStyle()
-    
+        popMatrix()
     
             
     def value(self):

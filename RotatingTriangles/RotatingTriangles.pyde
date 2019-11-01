@@ -1,8 +1,10 @@
+add_library('serial')
+add_library('arduino')
 '''copy of another sketch @rantonse posted on twitter
 Python version with sliders 12/31/16'''
 
+from inputs import Slider
 # from slider import Slider
-from slider import Slider
 
 num = 90
 # number of triangles
@@ -17,6 +19,7 @@ def setup():
     strokeWeight(2)
     slider1.position(10, 20)
     slider2.position(10, 60)
+    # Slider.setup_firmata(Arduino)
 
 def draw():
     global t, dt

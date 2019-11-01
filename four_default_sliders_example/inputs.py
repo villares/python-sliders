@@ -53,14 +53,15 @@ class Slider:
         noStroke()
         rect(self.x + 60, self.y, self.d_width + 10, 20)
         # line behind slider
-        stroke(0)
+        stroke(100)
         line(self.x, self.y, self.x + self.d_width, self.y)
         # press mouse to move slider
         if (self.x < mouseX < self.x + self.d_width and
                 self.y - 10 < mouseY < self.y + 10):
             fill(250)
             textSize(10)
-            text(str(int(self.val)), self.rectx, self.recty + 35)
+            textAlign(CENTER)
+            text(str(int(self.val)), self.rectx, self.recty + 30)
             if mousePressed:
                 self.rectx = mouseX
         # constrain rectangle
@@ -69,7 +70,7 @@ class Slider:
         # noStroke()
         fill(255)
         rect(self.rectx, self.recty + 10, 10, 20)
-        self.val = map(self.rectx, self.x, self.x + 120, self.low, self.high)
+        self.val = map(self.rectx, self.x, self.x + self.d_width, self.low, self.high)
         popStyle()
     
     def value(self):
