@@ -14,19 +14,18 @@ class Slider:
     firmata_port = None
     d_width = 120
 
-    def __init__(self, low, high, default, kbd=None):
+    def __init__(self, low, high, default=None, kbd=None):
         self.kbd = kbd or ('a', 'd')
         '''slider has range from low to high
         and is set to default'''
         self.low = low
         self.high = high
-        self.val = default
+        self.val = default if default is not None else (low + high) / 2
         self.clicked = False
         self.up, self.down = False, False
         self.sliders.append(self)
         self.label = None
         self.w, self.h = 120, 20
-
 
     def position(self, x, y):
         '''slider's position on screen'''
@@ -72,18 +71,17 @@ class Slider:
         strokeWeight(1)
         rect(self.rectx, self.recty + 10, 10, 20)
         self.val = map(self.rectx, self.x, self.x + 120, self.low, self.high)
-        #draw label
+        # draw label
         fill(0)
         textSize(10)
         # if show_value:
         #     text(int(self.val),self.rectx,self.recty + 35)
         if self.label is not None:
-            #text label
-            text(self.label,self.x + 135,self.y);
+            # text label
+            text(self.label, self.x + 135, self.y)
         popStyle()
         popMatrix()
-    
-            
+
     def value(self):
         self.update(display=True)
         return self.val
@@ -162,7 +160,7 @@ class Slider:
         if cls.firmata_port is not None:
             if pin == 13:
                 return cls.arduino.digitalRead(13) or space_pressed
-            else  :
+            else:
                 return arduino.digitalRead(pin)
         else:
             return space_pressed
