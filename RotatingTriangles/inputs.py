@@ -82,8 +82,8 @@ class Slider:
         popStyle()
         popMatrix()
 
-    def value(self):
-        self.update(display=True)
+    def value(self, display=True):
+        self.update(display=display)
         return self.val
 
     def key_pressed(self):
