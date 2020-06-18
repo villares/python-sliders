@@ -1,6 +1,7 @@
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
+*.proprieties
 
 # Folder config file
 Desktop.ini
@@ -20,7 +21,6 @@ $RECYCLE.BIN/
 # =========================
 # Operating System Files
 # =========================
-
 # OSX
 # =========================
 
