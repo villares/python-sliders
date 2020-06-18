@@ -1,13 +1,17 @@
 class Slider:
 
-    def __init__(self, low, high, default):
+    def __init__(self, low, high, default=None):
         """
         slider has range from low to high
-        and is set to default
+        and is set to default in the middle
+        if none is provided
         """
         self.low = low
         self.high = high
-        self.val = default
+        if default is None:
+            self.val = (low + high) / 2.
+        else:
+            self.val = default
         self.clicked = False
         self.label = ''  # blank label
         self.w, self.h = 120, 20
